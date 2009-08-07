@@ -1,3 +1,6 @@
+lib/it/core_ext/proc.rb
+lib/it/core_ext.rb
+lib/it/environmented_proc.rb
 lib/it.rb
 Rakefile.rb
 README.markdown
