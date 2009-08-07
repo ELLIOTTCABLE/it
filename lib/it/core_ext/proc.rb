@@ -16,6 +16,16 @@ class Proc
     
     proc = ->{}
     proc.inject(foo: 'bar').check {|rv| rv == proc }
+    
+    Class.new do 
+      def initialize
+        ->{self} .check {|p| p[] == self }
+        
+        object = Object.new
+        ->{self} .inject(self: object).check {|p| p[] == object }
+        self.methods.check {|methods| methods == Object.instance_methods }
+      end
+    end.new
   end
   
 end
