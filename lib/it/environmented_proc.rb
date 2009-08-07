@@ -22,6 +22,7 @@ class EnvironmentedProc < Proc
     self.variables.merge! variables
     return self
   end
+  alias_method :%, :inject
   Speck.new EnvironmentedProc.instance_method :inject do
     object = Object.new
     EnvironmentedProc.new {var} .inject(var: object)
@@ -29,6 +30,9 @@ class EnvironmentedProc < Proc
     EnvironmentedProc.new {[var1, var2, var3].join(' ')}
       .inject(var1: "This", var2: "is", var3: "awesome")
       .check {|eproc| eproc[] == "This is awesome" }
+    
+    (EnvironmentedProc.new {a + b + c} % {a: 1, b: 2, c: 3})
+      .check {|eproc| eproc[] == 6 }
     
     eproc = EnvironmentedProc.new {}
     eproc.inject(foo: 'bar').check {|rv| rv == eproc }
