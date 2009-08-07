@@ -1,7 +1,24 @@
 class Proc
   
+  attr_accessor :self
+  def self; binding.eval("self"); end
+  def self= object
+    return EnvironmentedProc.new(&self)
+      .tap {|eproc| eproc.self = object }
+  end
+  alias_method :set_self, :self=
+  Speck.new Proc.instance_method :self do
+    proc = Proc.new {self}
+    proc.self.check {|rv| rv == proc[] }
+  end
+  Speck.new Proc.instance_method :self= do
+    object = Object.new
+    ->{self}.set_self(object)
+      .check {|p| p[] == object }
+  end
+  
   def inject variables
-    EnvironmentedProc.new(&self).inject variables 
+    return EnvironmentedProc.new(&self).inject variables 
   end
   alias_method :%, :inject
   Speck.new Proc.instance_method :inject do
