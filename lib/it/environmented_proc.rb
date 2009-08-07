@@ -19,6 +19,7 @@ class EnvironmentedProc < Proc
   end
   
   def inject variables
+    self.self = variables.delete(:self) if variables[:self]
     self.variables.merge! variables
     return self
   end
