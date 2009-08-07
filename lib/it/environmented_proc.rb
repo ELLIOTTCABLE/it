@@ -2,6 +2,11 @@ class EnvironmentedProc < Proc
   
   attr_accessor :self
   def self; @self ||= binding.eval("self"); end
+  Speck.new EnvironmentedProc.instance_method :self= do
+    object = Object.new
+    EnvironmentedProc.new {self} .tap {|eproc| eproc.self = object }
+      .check {|eproc| eproc[] == object }
+  end
   
   attr_accessor :variables
   def variables; @variables ||= Hash.new; end
