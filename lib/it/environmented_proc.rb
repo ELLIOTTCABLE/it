@@ -30,6 +30,17 @@ class EnvironmentedProc < Proc
     
     eproc = EnvironmentedProc.new {}
     eproc.inject(foo: 'bar').check {|rv| rv == eproc }
+    
+    Class.new do 
+      def initialize
+        EnvironmentedProc.new {self} .check {|eproc| eproc[] == self }
+        
+        object = Object.new
+        EnvironmentedProc.new {self} .inject(self: object)
+          .check {|eproc| eproc[] == object }
+        self.methods.check {|methods| methods == Object.instance_methods }
+      end
+    end.new
   end
   
   def call
