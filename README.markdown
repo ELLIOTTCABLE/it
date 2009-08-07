@@ -8,6 +8,6 @@ EnvironmentedProc
 -----------------
 Just a little fun ride–along, no need to pay it any mind…
 
-    @thingie = Proc.new {who, what, when, where}
+    @thingie = Proc.new {p [who, what, when, where]}
     # … somewhere else …
     @thingie.inject who: "why", what: "oh", when: "why", where: "!"
