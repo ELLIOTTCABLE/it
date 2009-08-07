@@ -1,22 +1,23 @@
 class EnvironmentedProc < Proc
-  attr_accessor :environment
+  
+  attr_accessor :self
+  def self; @self ||= binding.eval("self"); end
   
   def initialize &block
     raise ArgumentError, 'EnvironmentedProcs may not have arguments' unless block.arity.zero?
-    @environment = Object.new
     super
+    self.self
   end
   Speck.new EnvironmentedProc.method :new do
     ->{ EnvironmentedProc.new {|arg| } }.check_exception ArgumentError
     
     eproc = EnvironmentedProc.new {}
-    EnvironmentedProc.new {} .check {|eproc| eproc.environment.is_a? Object }
     EnvironmentedProc.new {} .check {|eproc| eproc.is_a? Proc }
   end
   
   def inject variables
     variables.map do |variable, object|
-      (class<<@environment;self;end).send(:define_method, variable) {object}
+      (class<<@self;self;end).send(:define_method, variable) {object}
     end
     return self
   end
@@ -44,7 +45,7 @@ class EnvironmentedProc < Proc
   end
   
   def call
-    environment.instance_eval &self
+    @self.instance_eval &self
   end
   Speck.new EnvironmentedProc.instance_method :call do
     object = Object.new
