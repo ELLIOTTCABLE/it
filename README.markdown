@@ -11,3 +11,9 @@ Just a little fun ride–along, no need to pay it any mind…
     @thingie = Proc.new {p [who, what, when, where]}
     # … somewhere else …
     @thingie.inject who: "why", what: "oh", when: "why", where: "!"
+
+Man, I really need to change my self /-:
+
+    @thingie = Proc.new {self * 2}
+    # … somewhere else …
+    @thingie.set_self(2).call # => 4
