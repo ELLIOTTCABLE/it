@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["elliottcable"]
-  s.date = %q{2009-08-06}
+  s.date = %q{2009-09-07}
   s.description = %q{Injecting enumerable elements into a block near you!}
   s.email = ["it@elliottcable.com"]
   s.extra_rdoc_files = ["lib/it/core_ext/proc.rb", "lib/it/core_ext.rb", "lib/it/environmented_proc.rb", "lib/it.rb", "README.markdown"]
-  s.files = ["lib/it/core_ext/proc.rb", "lib/it/core_ext.rb", "lib/it/environmented_proc.rb", "lib/it.rb", "Rakefile.rb", "README.markdown", ".manifest", "it.gemspec"]
+  s.files = ["lib/it/core_ext/proc.rb", "lib/it/core_ext.rb", "lib/it/environmented_proc.rb", "lib/it.rb", "Rakefile.rb", "README.markdown", "specifications/it/core_ext/proc_specs.rb", "specifications/it/environmented_proc_specs.rb", "specifications/it_specs.rb", "specifications/speck_helper.rb", ".manifest", "it.gemspec"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/elliottcable/it}
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "It", "--main", "README.markdown"]

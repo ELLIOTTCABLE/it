@@ -4,4 +4,8 @@ lib/it/environmented_proc.rb
 lib/it.rb
 Rakefile.rb
 README.markdown
+specifications/it/core_ext/proc_specs.rb
+specifications/it/environmented_proc_specs.rb
+specifications/it_specs.rb
+specifications/speck_helper.rb
 .manifest

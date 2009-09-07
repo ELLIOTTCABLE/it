@@ -1,5 +1,4 @@
 ($:.unshift File.expand_path(File.join( File.dirname(__FILE__), 'lib' ))).uniq!
-require 'speck'
 require 'it'
 
 # =======================
@@ -37,13 +36,12 @@ end
 begin
   require 'speck'
   require 'slack'
-  require 'spark'
   require 'spark/rake/speck_task'
   
   task :default => :'speck:run'
   task :speck => :'speck:run'
   namespace :speck do
-    Spark::Rake::SpeckTask.new
+    Spark::Rake::SpeckTask.new :run
   end
   
 rescue LoadError

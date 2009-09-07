@@ -2,15 +2,6 @@ class EnvironmentedProc < Proc
   
   attr_accessor :self
   def self; @self ||= binding.eval("self"); end
-  Speck.new EnvironmentedProc.instance_method :self do
-    EnvironmentedProc.new {self}
-      .check {|eproc| eproc[] == eproc.self }
-  end
-  Speck.new EnvironmentedProc.instance_method :self= do
-    object = Object.new
-    EnvironmentedProc.new {self} .tap {|eproc| eproc.self = object }
-      .check {|eproc| eproc[] == object }
-  end
   
   attr_accessor :variables
   def variables; @variables ||= Hash.new; end
@@ -20,12 +11,6 @@ class EnvironmentedProc < Proc
     super
     self.self
   end
-  Speck.new EnvironmentedProc.method :new do
-    ->{ EnvironmentedProc.new {|arg| } }.check_exception ArgumentError
-    
-    eproc = EnvironmentedProc.new {}
-    EnvironmentedProc.new {} .check {|eproc| eproc.is_a? Proc }
-  end
   
   def inject variables
     self.self = variables.delete(:self) if variables[:self]
@@ -33,31 +18,6 @@ class EnvironmentedProc < Proc
     return self
   end
   alias_method :%, :inject
-  Speck.new EnvironmentedProc.instance_method :inject do
-    object = Object.new
-    EnvironmentedProc.new {var} .inject(var: object)
-      .check {|eproc| eproc[] == object }
-    EnvironmentedProc.new {[var1, var2, var3].join(' ')}
-      .inject(var1: "This", var2: "is", var3: "awesome")
-      .check {|eproc| eproc[] == "This is awesome" }
-    
-    (EnvironmentedProc.new {a + b + c} % {a: 1, b: 2, c: 3})
-      .check {|eproc| eproc[] == 6 }
-    
-    eproc = EnvironmentedProc.new {}
-    eproc.inject(foo: 'bar').check {|rv| rv == eproc }
-    
-    Class.new do 
-      def initialize
-        EnvironmentedProc.new {self} .check {|eproc| eproc[] == self }
-        
-        object = Object.new
-        EnvironmentedProc.new {self} .inject(self: object)
-          .check {|eproc| eproc[] == object }
-        self.methods.check {|methods| methods == Object.instance_methods }
-      end
-    end.new
-  end
   
   def call
     eigenclass = class<<@self;self;end
@@ -75,15 +35,6 @@ class EnvironmentedProc < Proc
     end
     
     return rv
-  end
-  Speck.new EnvironmentedProc.instance_method :call do
-    object = Object.new
-    
-    # Ensure block executed properly
-    array = Array.new
-    EnvironmentedProc.new {array << object}.call.check { array.include? object }
-    
-    EnvironmentedProc.new {object}.call.check {|rv| rv == object }
   end
   
   alias_method :[], :call
