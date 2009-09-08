@@ -62,10 +62,10 @@ It::Battery[It] << Speck.new(EnvironmentedProc) do
         ->{ EnvironmentedProc.new {self} }.inject(self: object)
           .check {|eproc| eproc.call == object }
         
-        self.methods.check {|methods| methods == prior_methods }
-        self.instance_variables.check {|ivars| ivars == prior_instance_variables }
-        self.class.instance_variables.check {|cvars| cvars == prior_class_variables }
-        self.class.constants.check {|cons| cons == prior_constants }
+        ->{ self.methods }.check {|methods| methods == prior_methods }
+        ->{ self.instance_variables }.check {|ivars| ivars == prior_instance_variables }
+        ->{ self.class.instance_variables }.check {|cvars| cvars == prior_class_variables }
+        ->{ self.class.constants }.check {|cons| cons == prior_constants }
       end
     end.new
   end
