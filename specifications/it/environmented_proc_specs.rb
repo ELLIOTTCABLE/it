@@ -51,8 +51,6 @@ It::Battery[It] << Speck.new(EnvironmentedProc) do
   
   Speck.new EnvironmentedProc.instance_method :call do
     object = Object.new
-    
-    # Ensure block executed properly
     array = Array.new
     ->{ EnvironmentedProc.new {array << object}.call }.check { array.include? object }
     
