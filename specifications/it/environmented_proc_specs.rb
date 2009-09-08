@@ -6,12 +6,12 @@ require 'it/environmented_proc'
 It::Battery[It] << Speck.new(EnvironmentedProc) do |target|
   Speck.new EnvironmentedProc.instance_method :self do
     ->{ EnvironmentedProc.new {self} }
-      .check {|eproc| eproc[] == eproc.self }
+      .check {|eproc| eproc.call == eproc.self }
   end
   Speck.new EnvironmentedProc.instance_method :self= do
     object = Object.new
     ->{ EnvironmentedProc.new {self} .tap {|eproc| eproc.self = object } }
-      .check {|eproc| eproc[] == object }
+      .check {|eproc| eproc.call == object }
   end
   
   Speck.new EnvironmentedProc.instance_method :initialize do
@@ -24,24 +24,24 @@ It::Battery[It] << Speck.new(EnvironmentedProc) do |target|
   Speck.new EnvironmentedProc.instance_method :inject do
     object = Object.new
     ->{ EnvironmentedProc.new {var} .inject(var: object) }
-      .check {|eproc| eproc[] == object }
+      .check {|eproc| eproc.call == object }
     ->{ EnvironmentedProc.new {[var1, var2, var3].join(' ')}
       .inject(var1: "This", var2: "is", var3: "awesome") }
-      .check {|eproc| eproc[] == "This is awesome" }
+      .check {|eproc| eproc.call == "This is awesome" }
     
     ->{ EnvironmentedProc.new {a + b + c} % {a: 1, b: 2, c: 3} }
-      .check {|eproc| eproc[] == 6 }
+      .check {|eproc| eproc.call == 6 }
     
     eproc = EnvironmentedProc.new {}
     ->{ eproc.inject(foo: 'bar') }.check {|rv| rv == eproc }
     
     Class.new do 
       def initialize
-        ->{ EnvironmentedProc.new {self} }.check {|eproc| eproc[] == self }
+        ->{ EnvironmentedProc.new {self} }.check {|eproc| eproc.call == self }
         
         object = Object.new
         ->{ EnvironmentedProc.new {self} }.inject(self: object)
-          .check {|eproc| eproc[] == object }
+          .check {|eproc| eproc.call == object }
         self.methods.check {|methods| methods == Object.instance_methods }
       end
     end.new
