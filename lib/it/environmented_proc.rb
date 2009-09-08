@@ -35,7 +35,7 @@ class EnvironmentedProc < Proc
   
   # A `Hash` of variables to be injected into the scope for the duration of
   # execution.
-  attr_accessor :variables
+  attr_reader :variables
   def variables; @variables ||= Hash.new; end
   
   ##
