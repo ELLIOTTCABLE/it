@@ -75,6 +75,13 @@ rescue LoadError
   task :documentation
 end
 
+task :clobber do
+  `cd '#{library}' && rm -rf ./meta/ ./pkg/`
+  %w[. speck slack spark smock].each do |library|
+    `cd '#{library}' && rm -rf ./meta/ ./pkg/`
+  end
+end
+
 desc 'Check everything over before commiting'
 task :aok => [:'documentation:generate', :'documentation:open',
               :'package:manifest', :'package:package',
