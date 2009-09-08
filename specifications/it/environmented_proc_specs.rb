@@ -33,6 +33,19 @@ It::Battery[It] << Speck.new(EnvironmentedProc) do
         ->{ EnvironmentedProc.new {var} .inject(var: object) }
           .check {|eproc| eproc.call == object }
         
+        ->{ EnvironmentedProc.new {@var} .inject(:@var => object) }
+          .check {|eproc| eproc.call == object }.status = :pending
+        
+        not ->{ EnvironmentedProc.new {@@var} .inject(:@@var => object).call }
+          .check_exception.status = :pending
+        ->{ EnvironmentedProc.new {@@var} .inject(:@@var => object) }
+          .check {|eproc| eproc.call == object }.status = :pending
+        
+        not ->{ EnvironmentedProc.new {Cons} .inject(Cons: object).call }
+          .check_exception.status = :pending
+        ->{ EnvironmentedProc.new {Cons} .inject(Cons: object) }
+          .check {|eproc| eproc.call == object }.status = :pending
+        
         ->{ EnvironmentedProc.new {[var1, var2, var3].join(' ')}
           .inject(var1: "This", var2: "is", var3: "awesome") }
           .check {|eproc| eproc.call == "This is awesome" }
