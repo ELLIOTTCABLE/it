@@ -47,8 +47,8 @@ It::Battery[It] << Speck.new(EnvironmentedProc) do
           .check {|eproc| eproc.call == object }.status = :pending
         
         ->{ EnvironmentedProc.new {[var1, var2, var3].join(' ')}
-          .inject(var1: "This", var2: "is", var3: "awesome") }
-          .check {|eproc| eproc.call == "This is awesome" }
+          .inject(var1: "This", var2: "is", var3: "awesome!") }
+          .check {|eproc| eproc.call == "This is awesome!" }
         
         ->{ EnvironmentedProc.new {a + b + c} % {a: 1, b: 2, c: 3} }
           .check {|eproc| eproc.call == 6 }
