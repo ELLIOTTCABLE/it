@@ -24,27 +24,33 @@ It::Battery[It] << Speck.new(EnvironmentedProc) do
   Speck.new EnvironmentedProc.instance_method :inject do
     Class.new do 
       def initialize
+        eigenclass = class<<self;self;end
+        
         prior_methods = self.methods
         prior_instance_variables = self.instance_variables
         prior_class_variables = self.class.instance_variables
         prior_constants = self.class.constants
+        
+        eigen_methods = eigenclass.methods
+        eigen_instance_variables = eigenclass.instance_variables
+        eigen_constants = eigenclass.constants
         
         object = Object.new
         ->{ EnvironmentedProc.new {var} .inject(var: object) }
           .check {|eproc| eproc.call == object }
         
         ->{ EnvironmentedProc.new {@var} .inject(:@var => object) }
-          .check {|eproc| eproc.call == object }.status = :pending
+          .check {|eproc| eproc.call == object }
         
         not ->{ EnvironmentedProc.new {@@var} .inject(:@@var => object).call }
-          .check_exception.status = :pending
+          .check_exception
         ->{ EnvironmentedProc.new {@@var} .inject(:@@var => object) }
-          .check {|eproc| eproc.call == object }.status = :pending
+          .check {|eproc| eproc.call == object }
         
         not ->{ EnvironmentedProc.new {Cons} .inject(Cons: object).call }
-          .check_exception.status = :pending
+          .check_exception
         ->{ EnvironmentedProc.new {Cons} .inject(Cons: object) }
-          .check {|eproc| eproc.call == object }.status = :pending
+          .check {|eproc| eproc.call == object }
         
         ->{ EnvironmentedProc.new {[var1, var2, var3].join(' ')}
           .inject(var1: "This", var2: "is", var3: "awesome!") }
@@ -66,6 +72,10 @@ It::Battery[It] << Speck.new(EnvironmentedProc) do
         ->{ self.instance_variables }.check {|ivars| ivars == prior_instance_variables }
         ->{ self.class.instance_variables }.check {|cvars| cvars == prior_class_variables }
         ->{ self.class.constants }.check {|cons| cons == prior_constants }
+        
+        ->{ eigenclass.methods }.check {|methods| methods == eigen_methods }
+        ->{ eigenclass.instance_variables }.check {|ivars| ivars == eigen_instance_variables }
+        ->{ eigenclass.constants }.check {|cons| cons == eigen_constants }
       end
     end.new
   end
