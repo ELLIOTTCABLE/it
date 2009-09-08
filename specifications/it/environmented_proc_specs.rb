@@ -3,7 +3,7 @@ require_relative '../speck_helper'
 require 'it_specs'
 
 require 'it/environmented_proc'
-It::Battery[It] << Speck.new(EnvironmentedProc) do |target|
+It::Battery[It] << Speck.new(EnvironmentedProc) do
   Speck.new EnvironmentedProc.instance_method :self do
     ->{ EnvironmentedProc.new {self} }
       .check {|eproc| eproc.call == eproc.self }

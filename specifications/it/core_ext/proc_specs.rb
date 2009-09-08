@@ -3,7 +3,7 @@ require_relative '../../speck_helper'
 require 'it_specs'
 
 require 'it/core_ext/proc'
-It::Battery[It] << Speck.new(Proc) do |target|
+It::Battery[It] << Speck.new(Proc) do
   
   Speck.new Proc.instance_method :self do
     proc = Proc.new {self}
