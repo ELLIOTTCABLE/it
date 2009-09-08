@@ -15,9 +15,6 @@ It::Battery[It] << Speck.new(EnvironmentedProc) do
   end
   
   Speck.new EnvironmentedProc.instance_method :initialize do
-    ->{ EnvironmentedProc.new {|arg| } }.check_exception ArgumentError
-    
-    eproc = EnvironmentedProc.new {}
     ->{ EnvironmentedProc.new {} }.check {|eproc| eproc.is_a? Proc }
   end
   
@@ -38,6 +35,10 @@ It::Battery[It] << Speck.new(EnvironmentedProc) do
         object = Object.new
         ->{ EnvironmentedProc.new {var} .inject(var: object) }
           .check {|eproc| eproc.call == object }
+        
+        another_object = Object.new
+        ->{ EnvironmentedProc.new {|var| var } .inject(var: object) }
+          .check {|eproc| eproc.call(another_object) == another_object }
         
         ->{ EnvironmentedProc.new {@var} .inject(:@var => object) }
           .check {|eproc| eproc.call == object }

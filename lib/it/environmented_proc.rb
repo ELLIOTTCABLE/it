@@ -21,12 +21,6 @@
 # - If the block depends on some minutiæ of the creation environment, there’s
 #   a chance it will break (as we override the creation environment to set
 #   `self`)
-# - At the moment, `EnvironmentedProc`s may not be created from `Proc`s that
-#   take arguments in the normal fashion. This isn’t such a big deal, becasue
-#   in most of the cases where `EnvironmentedProc`s would be desirable,
-#   injecting local variables is preferrable to passing arguments (DSLs,
-#   syntax hacks, and of course the library `EnvironmentedProc` was created
-#   for: it)
 class EnvironmentedProc < Proc
   
   # The value of `self` for the duration of execution
@@ -43,7 +37,6 @@ class EnvironmentedProc < Proc
   # object. When initialized, `self` is primed to the value of `self` in the
   # scope of the existing `Proc`.
   def initialize &block
-    raise ArgumentError, 'EnvironmentedProcs may not have arguments' unless block.arity.zero?
     super
     self.self
   end
@@ -73,7 +66,7 @@ class EnvironmentedProc < Proc
   # before execution (any instance methods that would be overwritten are
   # sequestered away and restored after execution, to avoid damaging the
   # object in `self`).
-  def call
+  def call(*args)
     # Okay, if you’re reading this, you probably want to know how all this
     # works. Uh… that’s gonna be fun /-:
     # The problem is that variable/constant lookups seem to be handled in a
@@ -133,7 +126,7 @@ class EnvironmentedProc < Proc
     
     proc = self
     object = @self
-    rv = scope.module_eval { object.instance_eval &proc }
+    rv = scope.module_eval { object.instance_exec(*args, &proc) }
     
     reimplementables.each do |type, name, object|
       # Now that we’ve evaluated the block, we’re going to teardown all the
